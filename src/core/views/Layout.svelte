@@ -239,7 +239,9 @@ $: {
 
         if (languages.length === 0) {
             const currentMenu = getDefaultMenu(menus);
-            setCurrentMenu(currentMenu);
+            if (currentMenu) {
+                setCurrentMenu(currentMenu);
+            }
         }
     }
 
