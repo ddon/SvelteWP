@@ -1,0 +1,21 @@
+<script>
+import Menu from '../components/Menu.svelte';
+import LanguageSwitcher from '../components/LanguageSwitcher.svelte';
+
+export let languages = [];
+export let menu = null;
+</script>
+
+<style>
+.header {
+    display: flex;
+    background-color: #eee;
+    padding: 10px;
+}
+</style>
+
+
+<header class='header'>
+    <Menu menu={menu} />
+    <LanguageSwitcher languages={languages} />
+</header>
