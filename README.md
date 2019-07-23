@@ -1,3 +1,7 @@
+⚠️ BEWARE: Experimental. Just for preview. Installation and usage will change.
+
+This project is an experiment to use Svelte (https://svelte.dev/) with WordPress (https://wordpress.org/).
+
 # SvelteWP
 
 
