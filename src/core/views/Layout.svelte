@@ -238,10 +238,7 @@ $: {
         routingMap = new RoutingMap(languages, urlPageMap);
 
         if (languages.length === 0) {
-            const currentMenu = getDefaultMenu(menus);
-            if (currentMenu) {
-                setCurrentMenu(currentMenu);
-            }
+            menu = [...menus];
         }
     }
 
