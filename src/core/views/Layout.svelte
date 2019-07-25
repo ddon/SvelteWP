@@ -255,10 +255,6 @@ $: {
 </script>
 
 <style>
-:global(body) {
-    padding: 0;
-}
-
 .app-loader {
     display: flex;
     justify-content: center;
