@@ -19,20 +19,35 @@ window.process = {
 };
 
 
+const defaultSettings = {
+    title: '',
+    apiUrl: '',
+
+    pubnubEnabled: false,
+    pubnubPublishKey: '',
+    pubnubSubscribeKey: ''
+};
+
+
+const defaultTemplates = {
+    'RequestLoader': RequestLoader,
+    'Header': Header,
+    'Footer': Footer,
+    'NotFound': NotFound
+};
+
+
 export let settings = {};
 export let templates = {};
 
+
 setContext('settings', {
-    title: '',
-    apiUrl: '',
+    ...defaultSettings,
     ...settings
 });
 
 setContext('templates', {
-    'RequestLoader': RequestLoader,
-    'Header': Header,
-    'Footer': Footer,
-    'NotFound': NotFound,
+    ...defaultTemplates,
     ...templates
 });
 

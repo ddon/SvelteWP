@@ -70,6 +70,18 @@ function getMenuBySlug(ms, slug) {
 }
 
 
+function getCurrentPageInfo() {
+    const pagesPaths = Object.keys(urlPageMap);
+    for (let i = 0; i < pagesPaths.length; i += 1) {
+        const pagePath = pagesPaths[i];
+        if (path === pagePath) {
+            return urlPageMap[pagePath];
+        }
+    }
+    return null;
+}
+
+
 function setCurrentMenu(currentMenu) {
     const menuItems = currentMenu ? currentMenu.items : [];
 
@@ -222,6 +234,80 @@ function updateMultilangPage() {
 }
 
 
+function reloadRouting() {
+    getRouting(settings.apiUrl).then((res) => {
+        if (res.ok) {
+            urlPageMap = res.data.url_page_map || {};
+            languages = res.data.languages || [];
+            menus = res.data.menus || [];
+
+            if (languages.length === 0) {
+                // TODO:
+            } else {
+                // TODO: it is code dup
+                if (page.polylang_current_lang) {
+                    const pageLocale = page.polylang_current_lang;
+                    const langSlug = pageLocale.split('_')[0];
+                    const currentMenu = getMenuBySlug(menus, langSlug);
+
+                    setCurrentMenu(currentMenu);
+                    setHeaderLanguages();
+                } else {
+                    const defaultLang = getDefaultLang(languages);
+                    const currentMenu = getMenuBySlug(menus, defaultLang.slug);
+
+                    setCurrentMenu(currentMenu);
+                    setHeaderLanguages();
+                }
+            }
+        }
+    });
+}
+
+
+function startMonitor() {
+    if (!settings.pubnubEnabled) {
+        return;
+    }
+
+    if (!window.PubNub) {
+        console.log('window.PubNub is not defined');
+        return;
+    }
+
+    const pubnub = new window.PubNub({
+        publishKey: settings.pubnubPublishKey,
+        subscribeKey: settings.pubnubSubscribeKey
+    });
+
+    pubnub.subscribe({
+        channels: ['wordpress']
+    });
+
+    pubnub.addListener({
+        message: (msg) => {
+            if (msg && msg.message) {
+                const { post_id: postId } = msg.message;
+                reloadRouting();
+
+                // TODO: if post id is current -> reload
+                // TODO: if post is not exists -> redirect
+
+                const pageInfo = getCurrentPageInfo();
+
+                if (pageInfo && pageInfo.page_id === postId) {
+                    if (languages.length === 0) {
+                        updatePage();
+                    } else {
+                        updateMultilangPage();
+                    }
+                }
+            }
+        }
+    });
+}
+
+
 $: getRouting(settings.apiUrl).then((res) => {
     if (res.ok) {
         isInitialized = true;
@@ -232,6 +318,8 @@ $: getRouting(settings.apiUrl).then((res) => {
     }
 });
 
+
+startMonitor();
 
 $: {
     if (!routingMap && urlPageMap) {
