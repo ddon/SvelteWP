@@ -84,6 +84,7 @@ function getCurrentMenu(currentMenu) {
     };
 }
 
+
 function getHeaderLanguages() {
     if (page) {
         const newLanguages = [];
