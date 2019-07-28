@@ -2,12 +2,13 @@
 import { getContext } from 'svelte';
 import { RouterView, getRoute } from '@svel/router';
 
+import RoutingMap from '../lib/routing-map';
+import { parseContent } from '../lib/yaml';
+
 import pageStore from '../stores/page';
 
 import { getRouting } from '../api/site';
 import { getPageById } from '../api/pages';
-
-import RoutingMap from '../lib/routing-map';
 
 
 const settings = getContext('settings');
@@ -29,6 +30,11 @@ let languages = [];
 let headerLanguages = [];
 let menus = [];
 let menu = null;
+let header = {};
+let footer = {};
+let headerData = {};
+let footerData = {};
+
 
 let page = null;
 
@@ -164,6 +170,17 @@ function updateMenuAndLanguages() {
 }
 
 
+function updateHeaderAndFooter(lang) {
+    if (header.translations) {
+        headerData = header.translations[lang] || {};
+    }
+
+    if (footer.translations) {
+        footerData = footer.translations[lang] || {};
+    }
+}
+
+
 function updatePage() {
     const pageId = routingMap.getPageIdByPath(path);
 
@@ -209,6 +226,7 @@ function updateMultilangPage() {
         if (defaultLang) {
             const currentMenu = getMenuBySlug(menus, defaultLang.slug);
             menu = getCurrentMenu(currentMenu);
+            updateHeaderAndFooter(defaultLang.slug);
         }
 
         headerLanguages = getHeaderLanguages();
@@ -226,6 +244,10 @@ function updateMultilangPage() {
             });
 
             updateMenuAndLanguages();
+
+            if (page && page.language) {
+                updateHeaderAndFooter(page.language);
+            }
         }
     });
 }
@@ -298,11 +320,27 @@ $: getRouting(settings.apiUrl).then((res) => {
         urlPageMap = res.data.url_page_map || {};
         languages = res.data.languages || [];
         menus = res.data.menus || [];
+
+        const hData = res.data.header || {};
+        Object.keys(hData.translations || {}).map((key) => {
+            const content = hData.translations[key].content || '';
+            hData.translations[key].content = parseContent(content);
+        });
+
+        const fData = res.data.footer || {};
+        Object.keys(fData.translations || {}).map((key) => {
+            const content = fData.translations[key].content || '';
+            fData.translations[key].content = parseContent(content);
+        });
+
+        header = hData;
+        footer = fData;
     }
 });
 
 
 startMonitor();
+
 
 $: {
     if (!routingMap && urlPageMap) {
@@ -350,13 +388,17 @@ $: {
                 this={Header}
                 languages={headerLanguages}
                 menu={menu}
+                data={headerData}
             />
         {/if}
 
         <RouterView />
 
         {#if Footer}
-            <svelte:component this={Footer} />
+            <svelte:component
+                this={Footer}
+                data={footerData}
+            />
         {/if}
     </div>
 {:else}

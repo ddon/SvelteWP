@@ -1,3 +1,7 @@
+<script>
+export let data = {};
+</script>
+
 <style>
 .footer {
     display: flex;
@@ -6,6 +10,9 @@
 }
 </style>
 
+
 <footer class='footer'>
-    Default footer
+    {#if data.content && data.content.copyright}
+        <div>{data.content.copyright}</div>
+    {/if}
 </footer>

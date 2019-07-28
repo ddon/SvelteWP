@@ -2,7 +2,8 @@
 import { getContext } from 'svelte';
 import { fade } from 'svelte/transition';
 import { getRoute } from '@svel/router';
-import jsyaml from 'js-yaml';
+
+import { parseContent } from '../lib/yaml';
 
 import pageStore from '../stores/page';
 
@@ -20,23 +21,6 @@ const unsubscribe = pageStore.subscribe(value => {
     page = value.page;
 });
 
-
-function deleteTags(content) {
-    const regex = /(<([^>]+)>)/ig;
-    return content.replace(regex, '');
-}
-
-function parseContent(content) {
-    let txt = deleteTags(content).trim();
-
-    try {
-        return jsyaml.load(txt);
-    } catch (e) {
-        console.log(txt);
-        console.log(e);
-        return {};
-    }
-}
 
 $: {
     if (page) {
