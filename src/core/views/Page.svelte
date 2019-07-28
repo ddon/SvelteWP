@@ -3,8 +3,6 @@ import { getContext } from 'svelte';
 import { fade } from 'svelte/transition';
 import { getRoute } from '@svel/router';
 
-import { parseContent } from '../lib/yaml';
-
 import pageStore from '../stores/page';
 
 
@@ -27,12 +25,11 @@ $: {
         templateComponent = null;
         templateData = null;
 
-        const pageContent = page.content || '';
-        const yaml = parseContent(pageContent);
+        const pageContent = page.content || {};
 
-        if (yaml && templates[yaml.template]) {
-            templateComponent = templates[yaml.template];
-            templateData = yaml;
+        if (templates[pageContent.template]) {
+            templateComponent = templates[pageContent.template];
+            templateData = pageContent;
         }
     }
 }

@@ -3,7 +3,6 @@ import { getContext } from 'svelte';
 import { RouterView, getRoute } from '@svel/router';
 
 import RoutingMap from '../lib/routing-map';
-import { parseContent } from '../lib/yaml';
 
 import pageStore from '../stores/page';
 
@@ -321,20 +320,8 @@ $: getRouting(settings.apiUrl).then((res) => {
         languages = res.data.languages || [];
         menus = res.data.menus || [];
 
-        const hData = res.data.header || {};
-        Object.keys(hData.translations || {}).map((key) => {
-            const content = hData.translations[key].content || '';
-            hData.translations[key].content = parseContent(content);
-        });
-
-        const fData = res.data.footer || {};
-        Object.keys(fData.translations || {}).map((key) => {
-            const content = fData.translations[key].content || '';
-            fData.translations[key].content = parseContent(content);
-        });
-
-        header = hData;
-        footer = fData;
+        header = res.data.header || {};
+        footer = res.data.footer || {};
     }
 });
 
