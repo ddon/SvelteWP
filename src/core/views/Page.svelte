@@ -43,7 +43,7 @@ $: {
         templateComponent = null;
         templateData = null;
 
-        const pageContent = page.content.rendered || '';
+        const pageContent = page.content || '';
         const yaml = parseContent(pageContent);
 
         if (yaml && templates[yaml.template]) {
@@ -69,7 +69,7 @@ $: {
             <svelte:component this={templateComponent} data={templateData} />
         </div>
     {:else}
-        {@html page.content.rendered}
+        {@html page.content}
     {/if}
 {:else if isNotFound}
     <svelte:component this={templates.NotFound} />
