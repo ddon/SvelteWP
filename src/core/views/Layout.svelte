@@ -6,7 +6,7 @@ import RoutingMap from '../lib/routing-map';
 
 import pageStore from '../stores/page';
 
-import { getRouting } from '../api/site';
+import { getInit } from '../api/site';
 import { getPageById } from '../api/pages';
 
 
@@ -24,6 +24,7 @@ let path = '';
 let routingMap = null;
 
 let isInitialized = false;
+let title = '';
 let urlPageMap = null;
 let languages = [];
 let headerLanguages = [];
@@ -253,8 +254,9 @@ function updateMultilangPage() {
 
 
 function updateRouting() {
-    getRouting(settings.apiUrl).then((res) => {
+    getInit(settings.apiUrl).then((res) => {
         if (res.ok) {
+            title = res.data.site_title || '';
             urlPageMap = res.data.url_page_map || {};
             languages = res.data.languages || [];
             menus = res.data.menus || [];
@@ -319,10 +321,11 @@ function startMonitor() {
 }
 
 
-$: getRouting(settings.apiUrl).then((res) => {
+$: getInit(settings.apiUrl).then((res) => {
     if (res.ok) {
         isInitialized = true;
 
+        title = res.data.site_title || '';
         urlPageMap = res.data.url_page_map || {};
         languages = res.data.languages || [];
         menus = res.data.menus || [];
@@ -373,8 +376,8 @@ $: {
 
 <svelte:head>
     <title>
-        {settings.title}
-        {(page && page.title) ? ` - ${page.title}` : ''}
+        {(page && page.title) ? `${page.title} - ` : ''}
+        {title}
     </title>
 </svelte:head>
 

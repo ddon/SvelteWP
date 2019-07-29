@@ -20,7 +20,6 @@ window.process = {
 
 
 const defaultSettings = {
-    title: '',
     apiUrl: '',
 
     pubnubEnabled: false,
