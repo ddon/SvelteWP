@@ -252,12 +252,15 @@ function updateMultilangPage() {
 }
 
 
-function reloadRouting() {
+function updateRouting() {
     getRouting(settings.apiUrl).then((res) => {
         if (res.ok) {
             urlPageMap = res.data.url_page_map || {};
             languages = res.data.languages || [];
             menus = res.data.menus || [];
+
+            header = res.data.header || {};
+            footer = res.data.footer || {};
 
             if (languages.length === 0) {
                 if (languages.length === 0) {
@@ -265,6 +268,10 @@ function reloadRouting() {
                 }
             } else {
                 updateMenuAndLanguages();
+            }
+
+            if (page && page.language) {
+                updateHeaderAndFooter(page.language);
             }
         }
     });
@@ -295,7 +302,7 @@ function startMonitor() {
             if (msg && msg.message) {
                 const { post_id: postId } = msg.message;
 
-                reloadRouting();
+                updateRouting();
 
                 const pageId = routingMap.getPageIdByPath(path);
 
@@ -365,7 +372,10 @@ $: {
 
 
 <svelte:head>
-    <title>{settings.title}</title>
+    <title>
+        {settings.title}
+        {(page && page.title) ? ` - ${page.title}` : ''}
+    </title>
 </svelte:head>
 
 {#if isInitialized}

@@ -5,6 +5,8 @@ import { getRoute } from '@svel/router';
 
 import pageStore from '../stores/page';
 
+import { getText } from '../lib/object-props';
+
 
 let templates = getContext('templates');
 
@@ -47,7 +49,11 @@ $: {
 {#if page}
     {#if templateComponent}
         <div in:fade="{{ delay: 250, duration: 300 }}">
-            <svelte:component this={templateComponent} data={templateData} />
+            <svelte:component
+                this={templateComponent}
+                data={templateData}
+                text={getText(templateData)}
+            />
         </div>
     {:else}
         {@html page.content}
