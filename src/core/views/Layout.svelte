@@ -76,17 +76,27 @@ function getMenuBySlug(ms, slug) {
 }
 
 
+function getFixedMenuItems(items) {
+    if (items.length === 0) {
+        return items;
+    }
+
+    return items.map((item) => {
+        return {
+            link: routingMap.fixPath(item.url),
+            name: item.title,
+            items: getFixedMenuItems(item.items || [])
+        };
+    });
+}
+
+
 function getCurrentMenu(currentMenu) {
     const menuItems = currentMenu ? currentMenu.items : [];
 
     return {
         ...currentMenu,
-        items: menuItems.map((item) => {
-            return {
-                link: routingMap.fixPath(item.url),
-                name: item.title
-            };
-        })
+        items: getFixedMenuItems(menuItems)
     };
 }
 

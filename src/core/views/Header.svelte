@@ -12,7 +12,6 @@ export let data = {};
 .header {
     display: flex;
     background-color: #eee;
-    padding: 10px;
 }
 </style>
 
