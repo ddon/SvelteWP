@@ -4,13 +4,15 @@ import { RouterView, getRoute } from '@svel/router';
 
 import LocalStorageWrapper from '../lib/local-storage-wrapper';
 import RoutingMap from '../lib/routing-map';
+import { startMonitor } from '../lib/monitor';
 
 import pageStore from '../stores/page';
 
-import { getInit } from '../api/site';
+import { getVersion, getInit } from '../api/site';
 import { getPageById } from '../api/pages';
 
 
+const version = getContext('version');
 const settings = getContext('settings');
 const templates = getContext('templates');
 
@@ -18,6 +20,7 @@ const RequestLoader = templates.RequestLoader;
 const Header = templates.Header;
 const Footer = templates.Footer;
 const NetworkError = templates.NetworkError;
+const NewVersion = templates.NewVersion;
 
 
 let route = getRoute();
@@ -25,6 +28,9 @@ let path = '';
 
 const cache = new LocalStorageWrapper();
 let routingMap = null;
+
+let isLastVersion = true;
+let lastVersion = '';
 
 let isInitialized = false;
 let title = '';
@@ -375,7 +381,27 @@ function tryReloadPage() {
 }
 
 
-function startMonitor() {
+function startVersionMonitor() {
+    getVersion().then((res) => {
+        if (res.version !== version) {
+            // console.log('[VersionMonitor] version changed from', version, 'to', res.version);
+            isLastVersion = false;
+            lastVersion = res.version;
+        }
+    });
+
+    startMonitor(() => {
+        getVersion().then((res) => {
+            if (res.version !== version) {
+                isLastVersion = false;
+                lastVersion = res.version;
+            }
+        });
+    });
+}
+
+
+function startUpdateMonitor() {
     if (!settings.pubnubEnabled) {
         return;
     }
@@ -431,7 +457,8 @@ $: getInit(settings.apiUrl).then((res) => {
 });
 
 
-startMonitor();
+startVersionMonitor();
+startUpdateMonitor();
 
 
 $: {
@@ -495,6 +522,13 @@ $: {
         {/if}
 
         <RouterView />
+
+        {#if !isLastVersion}
+            <svelte:component
+                this={NewVersion}
+                version={lastVersion}
+            />
+        {/if}
 
         {#if Footer}
             <svelte:component

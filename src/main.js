@@ -7,6 +7,7 @@ import templates from './templates';
 const app = new App({
     target: document.body,
     props: {
+        version: VERSION,
         settings: settings,
         templates: templates
     }

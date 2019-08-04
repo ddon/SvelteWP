@@ -11,6 +11,7 @@ import Page from './views/Page.svelte';
 
 import NotFound from './views/NotFound.svelte';
 import NetworkError from './views/NetworkError.svelte';
+import NewVersion from './views/NewVersion.svelte';
 
 
 // TODO: this is router fix, delete this after router updated
@@ -35,13 +36,17 @@ const defaultTemplates = {
     'Header': Header,
     'Footer': Footer,
     'NotFound': NotFound,
-    'NetworkError': NetworkError
+    'NetworkError': NetworkError,
+    'NewVersion': NewVersion
 };
 
 
+export let version = '';
 export let settings = {};
 export let templates = {};
 
+
+setContext('version', version);
 
 setContext('settings', {
     ...defaultSettings,
