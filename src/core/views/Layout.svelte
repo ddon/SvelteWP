@@ -2,6 +2,7 @@
 import { getContext } from 'svelte';
 import { RouterView, getRoute } from '@svel/router';
 
+import LocalStorageWrapper from '../lib/local-storage-wrapper';
 import RoutingMap from '../lib/routing-map';
 
 import pageStore from '../stores/page';
@@ -13,14 +14,16 @@ import { getPageById } from '../api/pages';
 const settings = getContext('settings');
 const templates = getContext('templates');
 
-const RequestLoader = templates['RequestLoader'];
-const Header = templates['Header'];
-const Footer = templates['Footer'];
+const RequestLoader = templates.RequestLoader;
+const Header = templates.Header;
+const Footer = templates.Footer;
+const NetworkError = templates.NetworkError;
 
 
 let route = getRoute();
 let path = '';
 
+const cache = new LocalStorageWrapper();
 let routingMap = null;
 
 let isInitialized = false;
@@ -37,6 +40,7 @@ let footerData = {};
 
 
 let page = null;
+let isNetworkError = false;
 
 
 function getDefaultLang(langs) {
@@ -196,23 +200,58 @@ function updatePage() {
 
     if (!pageId) {
         page = null;
-        pageStore.update(() => {
-            return {
-                isNotFound: true,
-                page: null
-            };
+        pageStore.update((val) => {
+            val.isNotFound = true;
+            val.page = null;
+            return val;
         });
         return;
+    }
+
+    const cachedPage = cache.getPageById(pageId);
+
+    if (cachedPage) {
+        page = cachedPage;
+        isNetworkError = false;
+        pageStore.update((val) => {
+            val.isNotFound = false;
+            val.isNetworkError = false;
+            val.page = cachedPage;
+            return val;
+        });
     }
 
     getPageById(settings.apiUrl, pageId).then((res) => {
         if (res.ok) {
             page = res.data;
-            pageStore.update(() => {
-                return {
-                    isNotFound: false,
-                    page: res.data
-                };
+            pageStore.update((val) => {
+                val.isNotFound = false;
+                val.page = res.data;
+                return val;
+            });
+
+            cache.setPageById(page);
+        }
+    }).catch((err) => {
+        const p = cache.getPageById(pageId);
+
+        if (p) {
+            page = p;
+            isNetworkError = true;
+            pageStore.update((val) => {
+                val.isNotFound = false;
+                val.isNetworkError = true;
+                val.page = p;
+                return val;
+            });
+        } else {
+            page = null;
+            isNetworkError = true;
+            pageStore.update((val) => {
+                val.isNotFound = true;
+                val.isNetworkError = true;
+                val.page = null;
+                return val;
             });
         }
     });
@@ -224,11 +263,10 @@ function updateMultilangPage() {
 
     if (!pageId) {
         page = null;
-        pageStore.update(() => {
-            return {
-                isNotFound: true,
-                page: null
-            };
+        pageStore.update((val) => {
+            val.isNotFound = true;
+            val.page = null;
+            return val;
         });
 
         const defaultLang = getDefaultLang(languages);
@@ -243,21 +281,59 @@ function updateMultilangPage() {
         return;
     }
 
+    const cachedPage = cache.getPageById(pageId);
+
+    if (cachedPage) {
+        page = cachedPage;
+        isNetworkError = false;
+        pageStore.update((val) => {
+            val.isNotFound = false;
+            val.isNetworkError = false;
+            val.page = cachedPage;
+            return val;
+        });
+    }
+
     getPageById(settings.apiUrl, pageId).then((res) => {
         if (res.ok) {
             page = res.data;
-            pageStore.update(() => {
-                return {
-                    isNotFound: false,
-                    page: res.data
-                };
+            isNetworkError = false;
+            pageStore.update((val) => {
+                val.isNotFound = false;
+                val.isNetworkError = false;
+                val.page = res.data;
+                return val;
             });
+
+            cache.setPageById(page);
 
             updateMenuAndLanguages();
 
             if (page && page.language) {
                 updateHeaderAndFooter(page.language);
             }
+        }
+    }).catch(() => {
+        const p = cache.getPageById(pageId);
+
+        if (p) {
+            page = p;
+            isNetworkError = true;
+            pageStore.update((val) => {
+                val.isNotFound = false;
+                val.isNetworkError = true;
+                val.page = p;
+                return val;
+            });
+        } else {
+            page = null;
+            isNetworkError = true;
+            pageStore.update((val) => {
+                val.isNotFound = true;
+                val.isNetworkError = true;
+                val.page = null;
+                return val;
+            });
         }
     });
 }
@@ -287,6 +363,15 @@ function updateRouting() {
             }
         }
     });
+}
+
+
+function tryReloadPage() {
+    if (languages.length === 0) {
+        updatePage();
+    } else {
+        updateMultilangPage();
+    }
 }
 
 
@@ -399,6 +484,13 @@ $: {
                 languages={headerLanguages}
                 menu={menu}
                 data={headerData}
+            />
+        {/if}
+
+        {#if isNetworkError}
+            <svelte:component
+                this={NetworkError}
+                on:reload={tryReloadPage}
             />
         {/if}
 

@@ -12,6 +12,18 @@
         <link rel='stylesheet' href='/bundle.css'>
 
         <script defer src='/bundle.js'></script>
+
+        <script>
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('[PWA][ServiceWorker] Registration successful');
+                    })
+                    .catch(function(error) {
+                        console.log('[PWA][ServiceWorker] Registration failed, error:', error);
+                    });
+            }
+        </script>
     </head>
 
     <body></body>

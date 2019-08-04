@@ -11,6 +11,7 @@ import { getText } from '../lib/object-props';
 let templates = getContext('templates');
 
 let isNotFound = false;
+let isNetworkError = false;
 let page = null;
 let templateComponent = null;
 let templateData = null;
@@ -18,6 +19,7 @@ let templateData = null;
 
 const unsubscribe = pageStore.subscribe(value => {
     isNotFound = value.isNotFound;
+    isNetworkError = value.isNetworkError;
     page = value.page;
 });
 
@@ -58,7 +60,7 @@ $: {
     {:else}
         {@html page.content}
     {/if}
-{:else if isNotFound}
+{:else if isNotFound && !isNetworkError}
     <svelte:component this={templates.NotFound} />
 {/if}
 </div>

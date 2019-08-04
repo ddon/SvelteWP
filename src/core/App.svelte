@@ -8,7 +8,9 @@ import Layout from './views/Layout.svelte';
 import Header from './views/Header.svelte';
 import Footer from './views/Footer.svelte';
 import Page from './views/Page.svelte';
+
 import NotFound from './views/NotFound.svelte';
+import NetworkError from './views/NetworkError.svelte';
 
 
 // TODO: this is router fix, delete this after router updated
@@ -32,7 +34,8 @@ const defaultTemplates = {
     'RequestLoader': RequestLoader,
     'Header': Header,
     'Footer': Footer,
-    'NotFound': NotFound
+    'NotFound': NotFound,
+    'NetworkError': NetworkError
 };
 
 
