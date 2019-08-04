@@ -345,7 +345,7 @@ function updateRouting() {
             title = res.data.site_title || '';
             urlPageMap = res.data.url_page_map || {};
             languages = res.data.languages || [];
-            menus = res.data.menus || [];
+            menus = res.data.menus.primary || [];
 
             header = res.data.header || {};
             footer = res.data.footer || {};
@@ -423,7 +423,7 @@ $: getInit(settings.apiUrl).then((res) => {
         title = res.data.site_title || '';
         urlPageMap = res.data.url_page_map || {};
         languages = res.data.languages || [];
-        menus = res.data.menus || [];
+        menus = res.data.menus.primary || [];
 
         header = res.data.header || {};
         footer = res.data.footer || {};
