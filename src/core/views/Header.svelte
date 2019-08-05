@@ -18,5 +18,5 @@ export let data = {};
 
 <header class='header'>
     <Menu menu={menu} />
-    <LanguageSwitcher languages={languages} />
+    <LanguageSwitcher languages={languages} dropdown={true} />
 </header>
