@@ -74,11 +74,11 @@ function getMenuClasses(item) {
         <ul class='menu'>
             {#each menu.items as item}
                 <li class={getMenuClasses(item)}>
-                    {#if isAbsLink(item.link)}
-                        <a href={item.link}>{item.name}</a>
+                    {#if isAbsLink(item.url)}
+                        <a href={item.url}>{item.title}</a>
                     {:else}
-                        <RouterLink to={item.link}>
-                            {item.name}
+                        <RouterLink to={item.url}>
+                            {item.title}
                         </RouterLink>
                     {/if}
                     <SubMenu item={item} />

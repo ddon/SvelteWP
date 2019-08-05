@@ -16,12 +16,11 @@ const version = getContext('version');
 const settings = getContext('settings');
 const templates = getContext('templates');
 
-const RequestLoader = templates.RequestLoader;
-const Header = templates.Header;
-const Footer = templates.Footer;
-const NetworkError = templates.NetworkError;
-const NewVersion = templates.NewVersion;
 
+const defaultMenus = {
+    primary: {},
+    footer: {}
+};
 
 let route = getRoute();
 let path = '';
@@ -36,14 +35,12 @@ let isInitialized = false;
 let title = '';
 let urlPageMap = null;
 let languages = [];
-let headerLanguages = [];
-let menus = [];
+let menus = { ...defaultMenus };
+
 let menu = null;
+let headerLanguages = [];
 let header = {};
 let footer = {};
-let headerData = {};
-let footerData = {};
-
 
 let page = null;
 let isNetworkError = false;
@@ -60,53 +57,12 @@ function getDefaultLang(langs) {
 }
 
 
-function getDefaultMenu(ms) {
-    for (let i = 0; i < ms.length; i += 1) {
-        const m = ms[i];
-        const menuItems = m.items || [];
-        for (let j = 0; j < menuItems.length; j += 1) {
-            const mi = menuItems[j];
-            if (mi.url === '/') {
-                return m;
-            }
-        }
-    }
-    return null;
-}
-
-
-function getMenuBySlug(ms, slug) {
-    for (let i = 0; i < ms.length; i += 1) {
-        const m = ms[i];
-        if (m.slug === slug) {
-            return m;
-        }
-    }
-    return null;
-}
-
-
-function getFixedMenuItems(items) {
-    if (items.length === 0) {
-        return items;
-    }
-
-    return items.map((item) => {
-        return {
-            link: routingMap.fixPath(item.url),
-            name: item.title,
-            items: getFixedMenuItems(item.items || [])
-        };
-    });
-}
-
-
 function getCurrentMenu(currentMenu) {
     const menuItems = currentMenu ? currentMenu.items : [];
 
     return {
         ...currentMenu,
-        items: getFixedMenuItems(menuItems)
+        items: menuItems
     };
 }
 
@@ -135,12 +91,12 @@ function getHeaderLanguages() {
                         break;
                     }
                 }
-
-                newLanguages.push({
-                    link: link,
-                    name: lang.name
-                });
             }
+
+            newLanguages.push({
+                link: link,
+                name: lang.name
+            });
         }
 
         return newLanguages;
@@ -154,14 +110,14 @@ function getHeaderLanguages() {
         let link = '/';
         let menuItems = [];
 
-        const m = getMenuBySlug(menus, lang.slug);
+        const m = menus.primary[lang.slug];
 
         if (m) {
             menuItems = m.items || [];
         }
 
         if (menuItems.length > 0) {
-            link = routingMap.fixPath(menuItems[0].url);
+            link = menuItems[0].url;
         }
 
         newLanguages.push({
@@ -176,27 +132,18 @@ function getHeaderLanguages() {
 
 function updateMenuAndLanguages() {
     if (page.language) {
-        const currentMenu = getMenuBySlug(menus, page.language);
+        const currentMenu = menus.primary[page.language];
 
         menu = getCurrentMenu(currentMenu);
         headerLanguages = getHeaderLanguages();
+        footer = menus.footer[page.language] || {};
     } else {
         const defaultLang = getDefaultLang(languages);
-        const currentMenu = getMenuBySlug(menus, defaultLang.slug);
+        const currentMenu = menus.primary[defaultLang.slug];
 
         menu = getCurrentMenu(currentMenu);
         headerLanguages = getHeaderLanguages();
-    }
-}
-
-
-function updateHeaderAndFooter(lang) {
-    if (header.translations) {
-        headerData = header.translations[lang] || {};
-    }
-
-    if (footer.translations) {
-        footerData = footer.translations[lang] || {};
+        footer = menus.footer[defaultLang] || {};
     }
 }
 
@@ -278,9 +225,9 @@ function updateMultilangPage() {
         const defaultLang = getDefaultLang(languages);
 
         if (defaultLang) {
-            const currentMenu = getMenuBySlug(menus, defaultLang.slug);
+            const currentMenu = menus.primary[defaultLang.slug];
             menu = getCurrentMenu(currentMenu);
-            updateHeaderAndFooter(defaultLang.slug);
+            footer = menus.footer[defaultLang.slug];
         }
 
         headerLanguages = getHeaderLanguages();
@@ -314,10 +261,6 @@ function updateMultilangPage() {
             cache.setPageById(page);
 
             updateMenuAndLanguages();
-
-            if (page && page.language) {
-                updateHeaderAndFooter(page.language);
-            }
         }
     }).catch(() => {
         const p = cache.getPageById(pageId);
@@ -351,21 +294,14 @@ function updateRouting() {
             title = res.data.site_title || '';
             urlPageMap = res.data.url_page_map || {};
             languages = res.data.languages || [];
-            menus = res.data.menus.primary || [];
-
-            header = res.data.header || {};
-            footer = res.data.footer || {};
+            menus = res.data.menus || { ...defaultMenus };
 
             if (languages.length === 0) {
                 if (languages.length === 0) {
-                    menu = [...menus];
+                    menu = { ...menu.primary };
                 }
             } else {
                 updateMenuAndLanguages();
-            }
-
-            if (page && page.language) {
-                updateHeaderAndFooter(page.language);
             }
         }
     });
@@ -384,7 +320,8 @@ function tryReloadPage() {
 function startVersionMonitor() {
     getVersion().then((res) => {
         if (res.version !== version) {
-            // console.log('[VersionMonitor] version changed from', version, 'to', res.version);
+            console.log('[VersionMonitor] version changed from', version, 'to', res.version);
+
             isLastVersion = false;
             lastVersion = res.version;
         }
@@ -449,10 +386,7 @@ $: getInit(settings.apiUrl).then((res) => {
         title = res.data.site_title || '';
         urlPageMap = res.data.url_page_map || {};
         languages = res.data.languages || [];
-        menus = res.data.menus.primary || [];
-
-        header = res.data.header || {};
-        footer = res.data.footer || {};
+        menus = res.data.menus || { ...defaultMenus };
     }
 });
 
@@ -463,10 +397,10 @@ startUpdateMonitor();
 
 $: {
     if (!routingMap && urlPageMap) {
-        routingMap = new RoutingMap(languages, urlPageMap);
+        routingMap = new RoutingMap(urlPageMap);
 
         if (languages.length === 0) {
-            menu = [...menus];
+            menu = { ...menus.primary };
         }
     }
 
@@ -505,18 +439,16 @@ $: {
 
 {#if isInitialized}
     <div class='app'>
-        {#if Header}
-            <svelte:component
-                this={Header}
-                languages={headerLanguages}
-                menu={menu}
-                data={headerData}
-            />
-        {/if}
+        <svelte:component
+            this={templates.Header}
+            languages={headerLanguages}
+            menu={menu}
+            data={header}
+        />
 
         {#if isNetworkError}
             <svelte:component
-                this={NetworkError}
+                this={templates.NetworkError}
                 on:reload={tryReloadPage}
             />
         {/if}
@@ -525,22 +457,20 @@ $: {
 
         {#if !isLastVersion}
             <svelte:component
-                this={NewVersion}
+                this={templates.NewVersion}
                 version={lastVersion}
             />
         {/if}
 
-        {#if Footer}
-            <svelte:component
-                this={Footer}
-                data={footerData}
-            />
-        {/if}
+        <svelte:component
+            this={templates.Footer}
+            data={footer}
+        />
     </div>
 {:else}
     <div class='app-loader'>
         <svelte:component
-            this={RequestLoader}
+            this={templates.RequestLoader}
         />
     </div>
 {/if}
