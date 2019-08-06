@@ -18,7 +18,7 @@ const templates = getContext('templates');
 
 
 const defaultMenus = {
-    primary: {},
+    header: {},
     footer: {}
 };
 
@@ -110,7 +110,7 @@ function getHeaderLanguages() {
         let link = '/';
         let menuItems = [];
 
-        const m = menus.primary[lang.slug];
+        const m = menus.header[lang.slug];
 
         if (m) {
             menuItems = m.items || [];
@@ -132,14 +132,14 @@ function getHeaderLanguages() {
 
 function updateMenuAndLanguages() {
     if (page.language) {
-        const currentMenu = menus.primary[page.language];
+        const currentMenu = menus.header[page.language];
 
         menu = getCurrentMenu(currentMenu);
         headerLanguages = getHeaderLanguages();
         footer = menus.footer[page.language] || {};
     } else {
         const defaultLang = getDefaultLang(languages);
-        const currentMenu = menus.primary[defaultLang.slug];
+        const currentMenu = menus.header[defaultLang.slug];
 
         menu = getCurrentMenu(currentMenu);
         headerLanguages = getHeaderLanguages();
@@ -225,7 +225,7 @@ function updateMultilangPage() {
         const defaultLang = getDefaultLang(languages);
 
         if (defaultLang) {
-            const currentMenu = menus.primary[defaultLang.slug];
+            const currentMenu = menus.header[defaultLang.slug];
             menu = getCurrentMenu(currentMenu);
             footer = menus.footer[defaultLang.slug];
         }
@@ -298,7 +298,7 @@ function updateRouting() {
 
             if (languages.length === 0) {
                 if (languages.length === 0) {
-                    menu = { ...menu.primary };
+                    menu = { ...menu.header };
                 }
             } else {
                 updateMenuAndLanguages();
@@ -400,7 +400,7 @@ $: {
         routingMap = new RoutingMap(urlPageMap);
 
         if (languages.length === 0) {
-            menu = { ...menus.primary };
+            menu = { ...menus.header };
         }
     }
 
