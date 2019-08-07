@@ -36,6 +36,7 @@ let title = '';
 let urlPageMap = null;
 let languages = [];
 let menus = { ...defaultMenus };
+let logo = '';
 
 let menu = null;
 let headerLanguages = [];
@@ -295,6 +296,7 @@ function updateRouting() {
             urlPageMap = res.data.url_page_map || {};
             languages = res.data.languages || [];
             menus = res.data.menus || { ...defaultMenus };
+            logo = res.data.site_logo || '';
 
             if (languages.length === 0) {
                 if (languages.length === 0) {
@@ -387,6 +389,7 @@ $: getInit(settings.apiUrl).then((res) => {
         urlPageMap = res.data.url_page_map || {};
         languages = res.data.languages || [];
         menus = res.data.menus || { ...defaultMenus };
+        logo = res.data.site_logo || '';
     }
 });
 
@@ -443,6 +446,8 @@ $: {
             this={templates.Header}
             languages={headerLanguages}
             menu={menu}
+            logo={logo}
+            title={title}
             data={header}
         />
 
