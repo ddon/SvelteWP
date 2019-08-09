@@ -24,24 +24,34 @@ function isCurrentLang(lang) {
 }
 
 .languages-dropdown {
+    flex: 1 0 auto;
+
+    display: flex;
+    justify-content: flex-end;
+
     position: relative;
-    min-width: 100px;
 
     transition: 200ms;
     transition-delay: 200ms;
 }
 
 .languages-dropdown .language-link {
+    min-width: 65px;
+
+    display: flex;
+    align-items: center;
     padding: 10px 15px 10px 15px;
+
+    transition: 200ms;
+    transition-delay: 200ms;
 }
 
 .languages-dropdown .languages-dropdown-menu {
-    min-width: 100px;
     position: absolute;
-    top: 38px;
+    top: 50px;
     right: 0;
 
-    background-color: #ddd;
+    background-color: #dddddd;
 
     visibility: hidden;
     opacity: 0;
@@ -51,8 +61,8 @@ function isCurrentLang(lang) {
     transition-delay: 200ms;
 }
 
-.languages-dropdown:hover {
-    background-color: #ddd;
+.languages-dropdown:hover .language-link {
+    background-color: #0178a9;
 }
 
 .languages-dropdown:hover .languages-dropdown-menu {
@@ -68,7 +78,9 @@ function isCurrentLang(lang) {
             {#each languages as lang}
                 {#if isCurrentLang(lang)}
                     <div class='language-link'>
-                        <RouterLink to={lang.link}>{lang.name}</RouterLink>
+                        <RouterLink to={lang.link} style='color: #ffffff;'>
+                            {lang.name}
+                        </RouterLink>
                     </div>
                 {/if}
             {/each}
@@ -76,7 +88,9 @@ function isCurrentLang(lang) {
                 {#each languages as lang}
                     {#if !isCurrentLang(lang)}
                         <div class='language-link'>
-                            <RouterLink to={lang.link}>{lang.name}</RouterLink>
+                            <RouterLink to={lang.link} style='color: #ffffff;'>
+                                {lang.name}
+                            </RouterLink>
                         </div>
                     {/if}
                 {/each}
@@ -86,7 +100,9 @@ function isCurrentLang(lang) {
         <nav class='languages'>
             {#each languages as lang}
                 <div class='language-link'>
-                    <RouterLink to={lang.link}>{lang.name}</RouterLink>
+                    <RouterLink to={lang.link} style='color: #ffffff;'>
+                        {lang.name}
+                    </RouterLink>
                 </div>
             {/each}
         </nav>

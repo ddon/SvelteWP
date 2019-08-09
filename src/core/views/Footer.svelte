@@ -10,7 +10,7 @@ export let data = {};
 <style>
 .footer {
     display: flex;
-    background-color: #eee;
+    background-color: #016087;
 }
 
 .footer .footer-menu {
@@ -32,9 +32,11 @@ export let data = {};
             {#each data.items as item}
                 <li class='footer-menu-item'>
                     {#if isAbsLink(item.url)}
-                        <a href={item.link}>{item.title}</a>
+                        <a href={item.link} style='color: #ffffff;'>
+                            {item.title}
+                        </a>
                     {:else}
-                        <RouterLink to={item.url}>
+                        <RouterLink to={item.url} style='color: #ffffff;'>
                             {item.title}
                         </RouterLink>
                     {/if}

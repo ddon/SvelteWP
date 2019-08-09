@@ -30,12 +30,12 @@ function getMenuItemClasses(item) {
     z-index: 100;
 
     position: absolute;
-    top: 38px;
+    top: 50px;
     left: 0;
 
     min-width: 160px;
 
-    background-color: #ddd;
+    background-color: #0178a9;
     transition: 200ms;
     transition-delay: 200ms;
 }
@@ -66,7 +66,7 @@ function getMenuItemClasses(item) {
 }
 
 .sub-menu .menu-item:hover {
-    background-color: #eee;
+    background-color: #0190ca;
 }
 
 .menu-item:hover > ul {
@@ -81,9 +81,11 @@ function getMenuItemClasses(item) {
         {#each item.items as item}
             <li class={getMenuItemClasses(item)}>
                 {#if isAbsLink(item.url)}
-                    <a href={item.url}>{item.title}</a>
+                    <a href={item.url} style='color: #ffffff;'>
+                        {item.title}
+                    </a>
                 {:else}
-                    <RouterLink to={item.url}>
+                    <RouterLink to={item.url} style='color: #ffffff;'>
                         {item.title}
                     </RouterLink>
                 {/if}

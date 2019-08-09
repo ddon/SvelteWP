@@ -34,7 +34,11 @@ function getMenuClasses(item) {
 }
 
 .menus .menu .menu-item {
+    display: flex;
+    align-items: center;
+
     padding: 10px 15px 10px 15px;
+
     cursor: pointer;
     position: relative;
 
@@ -43,7 +47,7 @@ function getMenuClasses(item) {
 }
 
 .menus .menu .menu-item:hover {
-    background-color: #ddd;
+    background-color: #0178a9;
     transition-delay: 0ms;
 }
 
@@ -64,7 +68,7 @@ function getMenuClasses(item) {
 
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
-    border-top: 5px solid #000;
+    border-top: 5px solid #ffffff;
 }
 </style>
 
@@ -75,9 +79,11 @@ function getMenuClasses(item) {
             {#each menu.items as item}
                 <li class={getMenuClasses(item)}>
                     {#if isAbsLink(item.url)}
-                        <a href={item.url}>{item.title}</a>
+                        <a href={item.url} style='color: #ffffff;'>
+                            {item.title}
+                        </a>
                     {:else}
-                        <RouterLink to={item.url}>
+                        <RouterLink to={item.url} style='color: #ffffff;'>
                             {item.title}
                         </RouterLink>
                     {/if}
