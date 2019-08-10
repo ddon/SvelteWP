@@ -6,11 +6,12 @@ import { RouterView, getRoute } from '@svel/router';
 let route = getRoute();
 
 export let languages = null;
+export let currentLanguage = '';
 export let dropdown = false;
 
 
 function isCurrentLang(lang) {
-    return lang.link === $route.path;
+    return lang.slug === currentLanguage;
 }
 </script>
 

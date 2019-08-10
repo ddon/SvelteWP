@@ -7,6 +7,7 @@ import LanguageSwitcher from '../components/LanguageSwitcher.svelte';
 
 
 export let languages = [];
+export let currentLanguage = '';
 export let menu = null;
 export let logo = '';
 export let title = '';
@@ -78,7 +79,11 @@ function toggleAsideMenu() {
         {/if}
 
         <Menu menu={menu} />
-        <LanguageSwitcher languages={languages} dropdown={true} />
+        <LanguageSwitcher
+            languages={languages}
+            currentLanguage={currentLanguage}
+            dropdown={true}
+        />
     {:else}
         <div class='hamburger-menu' role='button' on:click={() => { toggleAsideMenu(); }}>
             <div />
@@ -94,7 +99,11 @@ function toggleAsideMenu() {
             </div>
         {/if}
 
-        <LanguageSwitcher languages={languages} dropdown={true} />
+        <LanguageSwitcher
+            languages={languages}
+            currentLanguage={currentLanguage}
+            dropdown={true}
+        />
     {/if}
 </header>
 

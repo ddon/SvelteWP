@@ -158,7 +158,7 @@ $: {
 {#if visible}
 <div class='aside-menu-layout' on:click={() => { dispatch('close'); }} />
 
-<div class='aside-menu' transition:fly='{{duration: 250, x: 0}}'>
+<div class='aside-menu' transition:fly='{{duration: 300, x: 0}}'>
     <div class='close' on:click={() => { dispatch('close'); }} />
 
     {#if logo}

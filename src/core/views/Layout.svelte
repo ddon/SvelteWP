@@ -58,16 +58,6 @@ function getDefaultLang(langs) {
 }
 
 
-function getCurrentMenu(currentMenu) {
-    const menuItems = currentMenu ? currentMenu.items : [];
-
-    return {
-        ...currentMenu,
-        items: menuItems
-    };
-}
-
-
 function getHeaderLanguages() {
     if (page) {
         const newLanguages = [];
@@ -95,8 +85,10 @@ function getHeaderLanguages() {
             }
 
             newLanguages.push({
+                slug: lang.slug,
                 link: link,
-                name: lang.name
+                name: lang.name,
+                default: lang.default
             });
         }
 
@@ -122,8 +114,10 @@ function getHeaderLanguages() {
         }
 
         newLanguages.push({
+            slug: lang.slug,
             link: link,
-            name: lang.name
+            name: lang.name,
+            default: lang.default
         });
     }
 
@@ -133,16 +127,13 @@ function getHeaderLanguages() {
 
 function updateMenuAndLanguages() {
     if (page.language) {
-        const currentMenu = menus.header[page.language];
-
-        menu = getCurrentMenu(currentMenu);
+        menu = menus.header[page.language];
         headerLanguages = getHeaderLanguages();
         footer = menus.footer[page.language] || {};
     } else {
         const defaultLang = getDefaultLang(languages);
-        const currentMenu = menus.header[defaultLang.slug];
 
-        menu = getCurrentMenu(currentMenu);
+        menu = menus.header[defaultLang.slug];
         headerLanguages = getHeaderLanguages();
         footer = menus.footer[defaultLang] || {};
     }
@@ -226,8 +217,7 @@ function updateMultilangPage() {
         const defaultLang = getDefaultLang(languages);
 
         if (defaultLang) {
-            const currentMenu = menus.header[defaultLang.slug];
-            menu = getCurrentMenu(currentMenu);
+            menu = menus.header[defaultLang.slug];
             footer = menus.footer[defaultLang.slug];
         }
 
@@ -445,6 +435,7 @@ $: {
         <svelte:component
             this={templates.Header}
             languages={headerLanguages}
+            currentLanguage={page ? page.language : ''}
             menu={menu}
             logo={logo}
             title={title}
