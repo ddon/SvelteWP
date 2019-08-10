@@ -49,7 +49,7 @@ function isCurrentLang(lang) {
 
 .languages-dropdown .languages-dropdown-menu {
     position: absolute;
-    top: 50px;
+    top: 0;
     right: 0;
 
     background-color: #dddddd;
@@ -87,13 +87,11 @@ function isCurrentLang(lang) {
             {/each}
             <div class='languages-dropdown-menu'>
                 {#each languages as lang}
-                    {#if !isCurrentLang(lang)}
-                        <div class='language-link'>
-                            <RouterLink to={lang.link} style='color: #ffffff;'>
-                                {lang.name}
-                            </RouterLink>
-                        </div>
-                    {/if}
+                    <div class='language-link'>
+                        <RouterLink to={lang.link} style='color: #ffffff;'>
+                            {lang.name}
+                        </RouterLink>
+                    </div>
                 {/each}
             </div>
         </nav>
