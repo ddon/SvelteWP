@@ -1,9 +1,5 @@
 <script>
 import { RouterLink } from '@svel/router';
-import { RouterView, getRoute } from '@svel/router';
-
-
-let route = getRoute();
 
 export let languages = null;
 export let currentLanguage = '';
