@@ -6,8 +6,32 @@ export let currentLanguage = '';
 export let dropdown = false;
 
 
-function isCurrentLang(lang) {
-    return lang.slug === currentLanguage;
+let currentLang = null;
+
+
+function getCurrentLang() {
+    let lng = null;
+
+    for (let i = 0; i < languages.length; i += 1) {
+        const lang = languages[i];
+        if (lang.slug === currentLanguage) {
+            lng = lang;
+            break;
+        }
+    }
+
+    if (!lng) {
+        lng = languages[0];
+    }
+
+    return lng;
+}
+
+
+$: {
+    if (languages.length > 0) {
+        currentLang = getCurrentLang();
+    }
 }
 </script>
 
@@ -72,15 +96,13 @@ function isCurrentLang(lang) {
 {#if languages}
     {#if dropdown}
         <nav class='languages-dropdown'>
-            {#each languages as lang}
-                {#if isCurrentLang(lang)}
-                    <div class='language-link'>
-                        <RouterLink to={lang.link} style='color: #ffffff;'>
-                            {lang.name}
-                        </RouterLink>
-                    </div>
-                {/if}
-            {/each}
+            {#if currentLang}
+                <div class='language-link'>
+                    <RouterLink to={currentLang.link} style='color: #ffffff;'>
+                        {currentLang.name}
+                    </RouterLink>
+                </div>
+            {/if}
             <div class='languages-dropdown-menu'>
                 {#each languages as lang}
                     <div class='language-link'>

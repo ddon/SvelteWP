@@ -81,7 +81,7 @@ export let status = {};
     <ul class='aside-sub-menu'>
         {#each item.items as item}
             <li class='aside-menu-item'>
-                <div class='aside-menu-item-link-container' on:click={() => { dispatch('toggle', { url: item.url }); }}>
+                <div class='aside-menu-item-link-container' on:click={() => { dispatch('close'); }}>
                     {#if isAbsLink(item.url)}
                         <a href={item.url} style='display: block; color: #ffffff; padding: 10px 15px 10px 15px;'>
                             {item.title}
@@ -94,7 +94,7 @@ export let status = {};
                 </div>
 
                 {#if item.items && item.items.length > 0}
-                    <div class='aside-menu-item-arrow' on:click={() => { console.log(item.url); dispatch('toggle', { url: item.url }); }}/>
+                    <div class='aside-menu-item-arrow' on:click={() => { dispatch('toggle', { url: item.url }); }}/>
                 {/if}
             </li>
 
@@ -103,6 +103,7 @@ export let status = {};
                     item={item}
                     status={status}
                     on:toggle={(evt) => { dispatch('toggle', evt.detail); }}
+                    on:close={() => { dispatch('close'); }}
                  />
             {/if}
         {/each}

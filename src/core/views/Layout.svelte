@@ -84,11 +84,13 @@ function getHeaderLanguages() {
                 }
             }
 
+            if (link === '/') {
+                link = lang.default_url;
+            }
+
             newLanguages.push({
-                slug: lang.slug,
-                link: link,
-                name: lang.name,
-                default: lang.default
+                ...lang,
+                link: link
             });
         }
 
@@ -100,24 +102,9 @@ function getHeaderLanguages() {
     for (let i = 0; i < languages.length; i += 1) {
         const lang = languages[i];
 
-        let link = '/';
-        let menuItems = [];
-
-        const m = menus.header[lang.slug];
-
-        if (m) {
-            menuItems = m.items || [];
-        }
-
-        if (menuItems.length > 0) {
-            link = menuItems[0].url;
-        }
-
         newLanguages.push({
-            slug: lang.slug,
-            link: link,
-            name: lang.name,
-            default: lang.default
+            ...lang,
+            link: lang.default_url
         });
     }
 
@@ -322,6 +309,8 @@ function startVersionMonitor() {
     startMonitor(() => {
         getVersion().then((res) => {
             if (res.version !== version) {
+                console.log('[VersionMonitor] version changed from', version, 'to', res.version);
+
                 isLastVersion = false;
                 lastVersion = res.version;
             }

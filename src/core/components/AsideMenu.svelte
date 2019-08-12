@@ -12,6 +12,7 @@ const dispatch = createEventDispatcher();
 
 export let visible = false;
 export let logo = '';
+export let logoUrl = '';
 export let title = '';
 export let menu = null;
 
@@ -162,8 +163,8 @@ $: {
     <div class='close' on:click={() => { dispatch('close'); }} />
 
     {#if logo}
-    <div class='logo'>
-        <RouterLink to='/' title={title}>
+    <div class='logo' on:click={() => { dispatch('close'); }}>
+        <RouterLink to={logoUrl} title={title}>
             <img src={logo} alt={title} />
         </RouterLink>
     </div>
@@ -202,6 +203,7 @@ $: {
                         item={item}
                         status={menuStatuses}
                         on:toggle={(evt) => { toggleMenu(evt.detail.url); }}
+                        on:close={() => { dispatch('close'); }}
                     />
                 {/if}
             </li>

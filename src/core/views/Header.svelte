@@ -17,11 +17,38 @@ export let data = {};
 
 let width = 0;
 let isVisibleAsideMenu = false;
+let indexUrl = '/';
+
+
+function getCurrentIndexUrl(langs) {
+    if (langs.length === 0) {
+        return '/';
+    }
+
+    let lng = null;
+
+    for (let i = 0; i < langs.length; i += 1) {
+        const lang = langs[i];
+        if (lang.slug === currentLanguage) {
+            lng = lang;
+            break;
+        }
+    }
+
+    if (!lng) {
+        lng = langs[0];
+    }
+
+    return lng.default_url;
+}
 
 
 function toggleAsideMenu() {
     isVisibleAsideMenu = !isVisibleAsideMenu;
 }
+
+
+$: indexUrl = getCurrentIndexUrl(languages);
 </script>
 
 <style>
@@ -72,13 +99,14 @@ function toggleAsideMenu() {
     {#if width > 800}
         {#if logo}
             <div class='logo'>
-                <RouterLink to='/' title={title}>
+                <RouterLink to={indexUrl} title={title}>
                     <img src={logo} alt={title} />
                 </RouterLink>
             </div>
         {/if}
 
         <Menu menu={menu} />
+
         <LanguageSwitcher
             languages={languages}
             currentLanguage={currentLanguage}
@@ -93,7 +121,7 @@ function toggleAsideMenu() {
 
         {#if logo}
             <div class='logo'>
-                <RouterLink to='/' title={title}>
+                <RouterLink to={indexUrl} title={title}>
                     <img src={logo} alt={title} />
                 </RouterLink>
             </div>
@@ -110,6 +138,7 @@ function toggleAsideMenu() {
 <AsideMenu
     visible={isVisibleAsideMenu}
     logo={logo}
+    logoUrl={indexUrl}
     title={title}
     menu={menu}
     on:close={() => { toggleAsideMenu(); }}
