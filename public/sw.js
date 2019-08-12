@@ -62,7 +62,7 @@ self.addEventListener('fetch', function(evt) {
             saveToCache(evt.request, res.clone());
             return res;
         }).catch((err) => {
-            console.log('[PWA][ServiceWorker] fetch error:', err);
+            console.log('[PWA][ServiceWorker] fetch error:', evt, err);
             return getFromCache(evt.request);
         }));
     } else {
