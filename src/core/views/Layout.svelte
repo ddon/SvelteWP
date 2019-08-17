@@ -117,6 +117,20 @@ function getHeaderLanguages() {
 }
 
 
+function updateInitData(res) {
+    isInitialized = true;
+
+    title = res.data.site_title || '';
+    logo = res.data.site_logo || '';
+    urlPageMap = res.data.url_page_map || {};
+    languages = res.data.languages || [];
+    menus = res.data.menus || { ...defaultMenus };
+
+    header = res.data.header || { translations: {} };
+    footer = res.data.footer || { translations: {} };
+}
+
+
 function updateMenuAndLanguages() {
     if (page.language) {
         menu = menus.header[page.language];
@@ -280,14 +294,7 @@ function updateMultilangPage() {
 function updateRouting() {
     getInit(settings.apiUrl).then((res) => {
         if (res.ok) {
-            title = res.data.site_title || '';
-            logo = res.data.site_logo || '';
-            urlPageMap = res.data.url_page_map || {};
-            languages = res.data.languages || [];
-            menus = res.data.menus || { ...defaultMenus };
-
-            header = res.data.header || {};
-            footer = res.data.footer || {};
+            updateInitData(res);
 
             if (languages.length === 0) {
                 if (languages.length === 0) {
@@ -376,16 +383,7 @@ function startUpdateMonitor() {
 
 $: getInit(settings.apiUrl).then((res) => {
     if (res.ok) {
-        isInitialized = true;
-
-        title = res.data.site_title || '';
-        logo = res.data.site_logo || '';
-        urlPageMap = res.data.url_page_map || {};
-        languages = res.data.languages || [];
-        menus = res.data.menus || { ...defaultMenus };
-
-        header = res.data.header || {};
-        footer = res.data.footer || {};
+        updateInitData(res);
     }
 });
 
