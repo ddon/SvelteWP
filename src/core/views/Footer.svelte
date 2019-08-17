@@ -4,6 +4,7 @@ import { RouterLink } from '@svel/router';
 import { isAbsLink } from './../lib/links';
 
 
+export let menu = {};
 export let data = {};
 </script>
 
@@ -27,9 +28,9 @@ export let data = {};
 
 
 <footer class='footer'>
-    {#if data.items && data.items.length > 0}
+    {#if menu && menu.items && menu.items.length > 0}
         <ul class='footer-menu'>
-            {#each data.items as item}
+            {#each menu.items as item}
                 <li class='footer-menu-item'>
                     {#if isAbsLink(item.url)}
                         <a href={item.link} style='color: #ffffff;'>

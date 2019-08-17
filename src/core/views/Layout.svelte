@@ -33,15 +33,20 @@ let lastVersion = '';
 
 let isInitialized = false;
 let title = '';
+let logo = '';
 let urlPageMap = null;
 let languages = [];
-let menus = { ...defaultMenus };
-let logo = '';
 
+let menus = { ...defaultMenus };
 let menu = null;
-let headerLanguages = [];
+
 let header = {};
+let headerLanguages = [];
+let headerData = {};
+
 let footer = {};
+let footerMenu = {};
+let footerData = {};
 
 let page = null;
 let isNetworkError = false;
@@ -116,13 +121,17 @@ function updateMenuAndLanguages() {
     if (page.language) {
         menu = menus.header[page.language];
         headerLanguages = getHeaderLanguages();
-        footer = menus.footer[page.language] || {};
+        headerData = header.translations[page.language];
+        footerMenu = menus.footer[page.language];
+        footerData = footer.translations[page.language];
     } else {
         const defaultLang = getDefaultLang(languages);
 
         menu = menus.header[defaultLang.slug];
         headerLanguages = getHeaderLanguages();
-        footer = menus.footer[defaultLang] || {};
+        headerData = header.translations[defaultLang.slug];
+        footerMenu = menus.footer[defaultLang.slug];
+        footerData = footer.translations[defaultLang.slug];
     }
 }
 
@@ -205,7 +214,9 @@ function updateMultilangPage() {
 
         if (defaultLang) {
             menu = menus.header[defaultLang.slug];
-            footer = menus.footer[defaultLang.slug];
+            headerData = header.translations[defaultLang.slug];
+            footerMenu = menus.footer[defaultLang.slug];
+            footerData = footer.translations[defaultLang.slug];
         }
 
         headerLanguages = getHeaderLanguages();
@@ -270,10 +281,13 @@ function updateRouting() {
     getInit(settings.apiUrl).then((res) => {
         if (res.ok) {
             title = res.data.site_title || '';
+            logo = res.data.site_logo || '';
             urlPageMap = res.data.url_page_map || {};
             languages = res.data.languages || [];
             menus = res.data.menus || { ...defaultMenus };
-            logo = res.data.site_logo || '';
+
+            header = res.data.header || {};
+            footer = res.data.footer || {};
 
             if (languages.length === 0) {
                 if (languages.length === 0) {
@@ -365,10 +379,13 @@ $: getInit(settings.apiUrl).then((res) => {
         isInitialized = true;
 
         title = res.data.site_title || '';
+        logo = res.data.site_logo || '';
         urlPageMap = res.data.url_page_map || {};
         languages = res.data.languages || [];
         menus = res.data.menus || { ...defaultMenus };
-        logo = res.data.site_logo || '';
+
+        header = res.data.header || {};
+        footer = res.data.footer || {};
     }
 });
 
@@ -428,7 +445,7 @@ $: {
             menu={menu}
             logo={logo}
             title={title}
-            data={header}
+            data={headerData}
         />
 
         {#if isNetworkError}
@@ -449,7 +466,8 @@ $: {
 
         <svelte:component
             this={templates.Footer}
-            data={footer}
+            menu={footerMenu}
+            data={footerData}
         />
     </div>
 {:else}
