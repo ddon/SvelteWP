@@ -19,7 +19,12 @@ npm run build
 
 ```js
 export default {
-    apiUrl: 'https://example.com'
+    title: 'Site Title',
+    apiUrl: 'https://example.com',
+
+    pubnubEnabled: false,
+    pubnubPublishKey: '',
+    pubnubSubscribeKey: ''
 };
 ```
 
