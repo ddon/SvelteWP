@@ -37,14 +37,14 @@ mkdir src/templates
 
 **src/templates/Home.svelte**
 
-```
+```js
 <h1>Home</h1>
 ```
 
 
 **src/templates/index.js**
 
-```
+```js
 import Home from './Home.svelte';
 
 
