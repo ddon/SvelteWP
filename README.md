@@ -9,7 +9,7 @@ On WordPress side you will need to install WordPress SvelteWP Plugin (https://gi
 ## Installation
 
 ```bash
-npm i
+npm install
 npm run build
 ```
 
@@ -51,4 +51,42 @@ import Home from './Home.svelte';
 export default {
     'Home': Home
 };
+```
+
+
+## Nginx
+
+```nginx
+# -*- mode: nginx -*-
+
+server {
+    listen 80;
+    server_name example.com www.example.com;
+
+    location / {
+        return 301 https://$server_name$request_uri;
+    }
+
+    location ~ /\.well-known {
+        root /www/certbot;
+    }
+}
+
+server {
+    listen 443 ssl;
+    server_name example.com www.example.com;
+
+    root /path/to/public;
+    index index.php index.html;
+
+    access_log  /var/log/nginx/example.com.access.log;
+    error_log   /var/log/nginx/example.com.error.log;
+
+    ssl_certificate     /etc/nginx/ssl/example.com/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/example.com/privkey.pem;
+
+    location / {
+        try_files $uri /index.html;
+    }
+}
 ```
