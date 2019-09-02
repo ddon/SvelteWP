@@ -22,6 +22,14 @@ const defaultMenus = {
     footer: {}
 };
 
+const defaultLanguages = {
+    items: [],
+    language_switcher_settings: {
+        header: {},
+        footer: {}
+    }
+};
+
 let route = getRoute();
 let path = '';
 
@@ -35,7 +43,7 @@ let isInitialized = false;
 let title = '';
 let logo = '';
 let urlPageMap = null;
-let languages = [];
+let languages = { ...defaultLanguages };
 
 let menus = { ...defaultMenus };
 let menu = null;
@@ -53,8 +61,8 @@ let isNetworkError = false;
 
 
 function getDefaultLang(langs) {
-    for (let i = 0; i < langs.length; i += 1) {
-        const lang = langs[i];
+    for (let i = 0; i < langs.items.length; i += 1) {
+        const lang = langs.items[i];
         if (lang.default) {
             return lang;
         }
@@ -64,16 +72,31 @@ function getDefaultLang(langs) {
 
 
 function getHeaderLanguages() {
-    if (page) {
-        const newLanguages = [];
+    if (!page) {
+        const newLangs = [];
 
-        for (let i = 0; i < languages.length; i += 1) {
-            const lang = languages[i];
-            let link = '/';
+        for (let i = 0; i < languages.items.length; i += 1) {
+            const lang = languages.items[i];
 
-            if (page.language) {
-                const translationsKeys = Object.keys(page.translations);
+            newLangs.push({
+                ...lang,
+                link: lang.default_url
+            });
+        }
 
+        return newLangs;
+    }
+
+    const newLanguages = [];
+
+    for (let i = 0; i < languages.items.length; i += 1) {
+        const lang = languages.items[i];
+        let link = '/';
+
+        if (page.language) {
+            const translationsKeys = Object.keys(page.translations);
+
+            if (translationsKeys.indexOf(lang.slug) !== -1) {
                 for (let j = 0; j < translationsKeys.length; j += 1) {
                     const pageSlug = translationsKeys[j];
                     const pageId = page.translations[pageSlug];
@@ -87,29 +110,18 @@ function getHeaderLanguages() {
                         break;
                     }
                 }
+            } else {
+                continue;
             }
-
-            if (link === '/') {
-                link = lang.default_url;
-            }
-
-            newLanguages.push({
-                ...lang,
-                link: link
-            });
         }
 
-        return newLanguages;
-    }
-
-    const newLanguages = [];
-
-    for (let i = 0; i < languages.length; i += 1) {
-        const lang = languages[i];
+        if (link === '/') {
+            link = lang.default_url;
+        }
 
         newLanguages.push({
             ...lang,
-            link: lang.default_url
+            link: link
         });
     }
 
@@ -123,7 +135,7 @@ function updateInitData(res) {
     title = res.data.site_title || '';
     logo = res.data.site_logo || '';
     urlPageMap = res.data.url_page_map || {};
-    languages = res.data.languages || [];
+    languages = res.data.languages || { ...defaultLanguages };
     menus = res.data.menus || { ...defaultMenus };
 
     header = res.data.header || { translations: {} };
@@ -188,6 +200,8 @@ function updatePage() {
             cache.setPageById(page);
         }
     }).catch((err) => {
+        console.error(err);
+
         const p = cache.getPageById(pageId);
 
         if (p) {
@@ -265,7 +279,9 @@ function updateMultilangPage() {
 
             updateMenuAndLanguages();
         }
-    }).catch(() => {
+    }).catch((err) => {
+        console.error(err);
+
         const p = cache.getPageById(pageId);
 
         if (p) {
@@ -296,10 +312,8 @@ function updateRouting() {
         if (res.ok) {
             updateInitData(res);
 
-            if (languages.length === 0) {
-                if (languages.length === 0) {
-                    menu = { ...menu.header };
-                }
+            if (languages.items.length === 0) {
+                menu = { ...menu.header };
             } else {
                 updateMenuAndLanguages();
             }
@@ -309,7 +323,7 @@ function updateRouting() {
 
 
 function tryReloadPage() {
-    if (languages.length === 0) {
+    if (languages.items.length === 0) {
         updatePage();
     } else {
         updateMultilangPage();
@@ -369,7 +383,7 @@ function startUpdateMonitor() {
                 const pageId = routingMap.getPageIdByPath(path);
 
                 if (pageId && pageId === postId) {
-                    if (languages.length === 0) {
+                    if (languages.items.length === 0) {
                         updatePage();
                     } else {
                         updateMultilangPage();
@@ -380,6 +394,9 @@ function startUpdateMonitor() {
     });
 }
 
+startVersionMonitor();
+startUpdateMonitor();
+
 
 $: getInit(settings.apiUrl).then((res) => {
     if (res.ok) {
@@ -388,15 +405,11 @@ $: getInit(settings.apiUrl).then((res) => {
 });
 
 
-startVersionMonitor();
-startUpdateMonitor();
-
-
 $: {
     if (!routingMap && urlPageMap) {
         routingMap = new RoutingMap(urlPageMap);
 
-        if (languages.length === 0) {
+        if (languages.items.length === 0) {
             menu = { ...menus.header };
         }
     }
@@ -404,7 +417,7 @@ $: {
     if (routingMap && path !== $route.path) {
         path = $route.path;
 
-        if (languages.length === 0) {
+        if (languages.items.length === 0) {
             updatePage();
         } else {
             updateMultilangPage();
@@ -440,6 +453,7 @@ $: {
             this={templates.Header}
             languages={headerLanguages}
             currentLanguage={page ? page.language : ''}
+            isLanguagesDropdown={languages.language_switcher_settings.header.as_dropdown}
             menu={menu}
             logo={logo}
             title={title}
