@@ -453,7 +453,7 @@ $: {
             this={templates.Header}
             languages={headerLanguages}
             currentLanguage={page ? page.language : ''}
-            isLanguagesDropdown={languages.language_switcher_settings.header.as_dropdown}
+            isLanguagesDropdown={(languages.language_switcher_settings.header {}).as_dropdown}
             menu={menu}
             logo={logo}
             title={title}
