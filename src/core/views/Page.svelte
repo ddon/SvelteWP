@@ -3,6 +3,7 @@ import { getContext } from 'svelte';
 import { fade } from 'svelte/transition';
 import { getRoute } from '@svel/router';
 
+import menuStore from '../stores/menu';
 import pageStore from '../stores/page';
 
 import { getText } from '../lib/object-props';
@@ -15,9 +16,14 @@ let isNetworkError = false;
 let page = null;
 let templateComponent = null;
 let templateData = null;
+let menu = null;
 
 
-const unsubscribe = pageStore.subscribe(value => {
+menuStore.subscribe(value => {
+    menu = value.menu;
+});
+
+pageStore.subscribe(value => {
     isNotFound = value.isNotFound;
     isNetworkError = value.isNetworkError;
     page = value.page;
@@ -53,6 +59,7 @@ $: {
         <div in:fade="{{ delay: 250, duration: 300 }}">
             <svelte:component
                 this={templateComponent}
+                menu={menu}
                 data={templateData}
                 text={getText(templateData)}
             />

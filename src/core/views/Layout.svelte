@@ -6,6 +6,7 @@ import LocalStorageWrapper from '../lib/local-storage-wrapper';
 import RoutingMap from '../lib/routing-map';
 import { startMonitor } from '../lib/monitor';
 
+import menuStore from '../stores/menu';
 import pageStore from '../stores/page';
 
 import { getVersion, getInit } from '../api/site';
@@ -146,6 +147,11 @@ function updateInitData(res) {
 function updateMenuAndLanguages() {
     if (page.language) {
         menu = menus.header[page.language];
+        menuStore.update((val) => {
+            val.menu = menu;
+            return val;
+        });
+
         headerLanguages = getHeaderLanguages();
         headerData = header.translations[page.language];
         footerMenu = menus.footer[page.language];
@@ -154,6 +160,11 @@ function updateMenuAndLanguages() {
         const defaultLang = getDefaultLang(languages);
 
         menu = menus.header[defaultLang.slug];
+        menuStore.update((val) => {
+            val.menu = menu;
+            return val;
+        });
+
         headerLanguages = getHeaderLanguages();
         headerData = header.translations[defaultLang.slug];
         footerMenu = menus.footer[defaultLang.slug];
@@ -242,6 +253,11 @@ function updateMultilangPage() {
 
         if (defaultLang) {
             menu = menus.header[defaultLang.slug];
+            menuStore.update((val) => {
+                val.menu = menu;
+                return val;
+            });
+
             headerData = header.translations[defaultLang.slug];
             footerMenu = menus.footer[defaultLang.slug];
             footerData = footer.translations[defaultLang.slug];
@@ -314,6 +330,10 @@ function updateRouting() {
 
             if (languages.items.length === 0) {
                 menu = { ...menu.header };
+                menuStore.update((val) => {
+                    val.menu = menu;
+                    return val;
+                });
             } else {
                 updateMenuAndLanguages();
             }
@@ -411,6 +431,10 @@ $: {
 
         if (languages.items.length === 0) {
             menu = { ...menus.header };
+            menuStore.update((val) => {
+                val.menu = menu;
+                return val;
+            });
         }
     }
 
