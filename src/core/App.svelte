@@ -23,11 +23,8 @@ window.process = {
 
 
 const defaultSettings = {
-    apiUrl: '',
-
-    pubnubEnabled: false,
-    pubnubPublishKey: '',
-    pubnubSubscribeKey: ''
+    title: '',
+    apiUrl: ''
 };
 
 

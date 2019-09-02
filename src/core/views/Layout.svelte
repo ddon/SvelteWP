@@ -374,8 +374,8 @@ function startVersionMonitor() {
 }
 
 
-function startUpdateMonitor() {
-    if (!settings.pubnubEnabled) {
+function startUpdateMonitor(keys) {
+    if (!keys.publish_key || !keys.subscribe_key) {
         return;
     }
 
@@ -385,8 +385,8 @@ function startUpdateMonitor() {
     }
 
     const pubnub = new window.PubNub({
-        publishKey: settings.pubnubPublishKey,
-        subscribeKey: settings.pubnubSubscribeKey
+        publishKey: keys.publish_key,
+        subscribeKey: keys.subscribe_key
     });
 
     pubnub.subscribe({
@@ -415,12 +415,12 @@ function startUpdateMonitor() {
 }
 
 startVersionMonitor();
-startUpdateMonitor();
 
 
 $: getInit(settings.apiUrl).then((res) => {
     if (res.ok) {
         updateInitData(res);
+        startUpdateMonitor(res.data.pubnub || {});
     }
 });
 

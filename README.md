@@ -20,11 +20,7 @@ npm run build
 ```js
 export default {
     title: 'Site Title',
-    apiUrl: 'https://example.com',
-
-    pubnubEnabled: false,
-    pubnubPublishKey: '',
-    pubnubSubscribeKey: ''
+    apiUrl: 'https://example.com'
 };
 ```
 
@@ -41,7 +37,6 @@ mkdir src/templates
 <h1>Home</h1>
 ```
 
-
 **src/templates/index.js**
 
 ```js
@@ -49,7 +44,27 @@ import Home from './Home.svelte';
 
 
 export default {
-    'Home': Home
+    Home
+};
+```
+
+
+## Custom templates
+
+```js
+import Header from './Header.svelte';
+import Footer from './Footer.svelte';
+import CustomLeftMenu from './CustomLeftMenu.svelte';
+
+import Home from './Home.svelte';
+
+
+export default {
+    Header,
+    Footer,
+    CustomLeftMenu,
+
+    Home
 };
 ```
 
