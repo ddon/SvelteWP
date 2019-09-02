@@ -461,6 +461,11 @@ $: {
     display: flex;
     flex-direction: column;
 }
+
+.app-page-with-left-menu {
+    flex: 1 0 auto;
+    display: flex;
+}
 </style>
 
 
@@ -491,7 +496,21 @@ $: {
             />
         {/if}
 
-        <RouterView />
+        {#if !templates.CustomLeftMenu}
+            <RouterView />
+        {:else}
+            <div class='app-page-with-left-menu'>
+                <div>
+                    <svelte:component
+                        this={templates.CustomLeftMenu}
+                        menu={menu}
+                    />
+                </div>
+                <div>
+                    <RouterView />
+                </div>
+            </div>
+        {/if}
 
         {#if !isLastVersion}
             <svelte:component
