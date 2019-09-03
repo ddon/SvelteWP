@@ -41,9 +41,15 @@ function getMenuItemClasses(item) {
 }
 
 .sub-menu .menu-item {
-    padding: 10px 15px 10px 15px;
-    cursor: pointer;
     position: relative;
+
+    padding: 10px 15px 10px 15px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+
+    cursor: pointer;
 
     transition: 200ms;
     transition-delay: 200ms;
@@ -73,6 +79,25 @@ function getMenuItemClasses(item) {
     visibility: visible;
     opacity: 1;
 }
+
+.sub-menu-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.sub-menu-wrapper > ul {
+    top: 0;
+    left: 100%;
+}
+
+.sub-menu-wrapper:hover > ul {
+    visibility: visible;
+    opacity: 1;
+}
 </style>
 
 
@@ -90,7 +115,9 @@ function getMenuItemClasses(item) {
                     </RouterLink>
                 {/if}
                 {#if item.items && item.items.length > 0}
-                    <svelte:self item={item} />
+                    <div class='sub-menu-wrapper'>
+                        <svelte:self item={item} />
+                    </div>
                 {/if}
             </li>
         {/each}

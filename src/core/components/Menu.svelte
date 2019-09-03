@@ -9,7 +9,7 @@ import { isAbsLink } from './../lib/links';
 export let menu = null;
 
 
-function getMenuClasses(item) {
+function getMenuItemClasses(item) {
     const classes = ['menu-item'];
 
     if (item.items && item.items.length > 0) {
@@ -77,7 +77,7 @@ function getMenuClasses(item) {
     {#if menu}
         <ul class='menu'>
             {#each menu.items as item}
-                <li class={getMenuClasses(item)}>
+                <li class={getMenuItemClasses(item)}>
                     {#if isAbsLink(item.url)}
                         <a href={item.url} style='color: #ffffff;'>
                             {item.title}
@@ -87,7 +87,9 @@ function getMenuClasses(item) {
                             {item.title}
                         </RouterLink>
                     {/if}
-                    <SubMenu item={item} />
+                    {#if item.items && item.items.length > 0}
+                        <SubMenu item={item} />
+                    {/if}
                 </li>
             {/each}
         </ul>
