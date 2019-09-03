@@ -10,7 +10,7 @@ import menuStore from '../stores/menu';
 import pageStore from '../stores/page';
 
 import { getVersion, getInit } from '../api/site';
-import { getPageById } from '../api/pages';
+import { getPageById, getPrecachedPages } from '../api/pages';
 
 
 const version = getContext('version');
@@ -56,6 +56,11 @@ let headerData = {};
 let footer = {};
 let footerMenu = {};
 let footerData = {};
+
+let precachedPages = {
+    langSlug: null,
+    pages: []
+};
 
 let page = null;
 let isNetworkError = false;
@@ -173,6 +178,20 @@ function updateMenuAndLanguages() {
 }
 
 
+function updatePrecachedPages(langSlug) {
+    if (langSlug === precachedPages.langSlug) {
+        return;
+    }
+
+    getPrecachedPages(settings.apiUrl, langSlug).then((res) => {
+        if (res.ok) {
+            precachedPages.langSlug = langSlug;
+            precachedPages.pages = res.data || {};
+        }
+    });
+}
+
+
 function updatePage() {
     const pageId = routingMap.getPageIdByPath(path);
 
@@ -181,6 +200,20 @@ function updatePage() {
         pageStore.update((val) => {
             val.isNotFound = true;
             val.page = null;
+            return val;
+        });
+        return;
+    }
+
+    const precachedPage = precachedPages.pages[pageId];
+
+    if (precachedPage) {
+        page = precachedPage;
+        isNetworkError = false;
+        pageStore.update((val) => {
+            val.isNotFound = false;
+            val.isNetworkError = false;
+            val.page = precachedPage;
             return val;
         });
         return;
@@ -209,6 +242,8 @@ function updatePage() {
             });
 
             cache.setPageById(page);
+
+            updatePrecachedPage('');
         }
     }).catch((err) => {
         console.error(err);
@@ -267,6 +302,20 @@ function updateMultilangPage() {
         return;
     }
 
+    const precachedPage = precachedPages.pages[pageId];
+
+    if (precachedPage) {
+        page = precachedPage;
+        isNetworkError = false;
+        pageStore.update((val) => {
+            val.isNotFound = false;
+            val.isNetworkError = false;
+            val.page = precachedPage;
+            return val;
+        });
+        return;
+    }
+
     const cachedPage = cache.getPageById(pageId);
 
     if (cachedPage) {
@@ -294,6 +343,8 @@ function updateMultilangPage() {
             cache.setPageById(page);
 
             updateMenuAndLanguages();
+
+            updatePrecachedPages(page.language || '');
         }
     }).catch((err) => {
         console.error(err);
