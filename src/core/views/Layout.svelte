@@ -4,7 +4,8 @@ import { RouterView, getRoute } from '@svel/router';
 
 import LocalStorageWrapper from '../lib/local-storage-wrapper';
 import RoutingMap from '../lib/routing-map';
-import { startMonitor } from '../lib/monitor';
+import startMonitor from '../lib/monitor';
+import startPubnub from '../lib/pubnub';
 
 import menuStore from '../stores/menu';
 import pageStore from '../stores/page';
@@ -425,45 +426,22 @@ function startVersionMonitor() {
 }
 
 
-function startUpdateMonitor(keys) {
-    if (!keys.publish_key || !keys.subscribe_key) {
-        return;
-    }
+function startUpdatesMonitor(keys) {
+    startPubnub(keys, (postId) => {
+        updateRouting();
 
-    if (!window.PubNub) {
-        console.log('window.PubNub is not defined');
-        return;
-    }
+        const pageId = routingMap.getPageIdByPath(path);
 
-    const pubnub = new window.PubNub({
-        publishKey: keys.publish_key,
-        subscribeKey: keys.subscribe_key
-    });
-
-    pubnub.subscribe({
-        channels: ['wordpress']
-    });
-
-    pubnub.addListener({
-        message: (msg) => {
-            if (msg && msg.message) {
-                const { post_id: postId } = msg.message;
-
-                updateRouting();
-
-                const pageId = routingMap.getPageIdByPath(path);
-
-                if (pageId && pageId === postId) {
-                    if (languages.items.length === 0) {
-                        updatePage();
-                    } else {
-                        updateMultilangPage();
-                    }
-                }
+        if (pageId && pageId === postId) {
+            if (languages.items.length === 0) {
+                updatePage();
+            } else {
+                updateMultilangPage();
             }
         }
     });
 }
+
 
 startVersionMonitor();
 
@@ -471,7 +449,7 @@ startVersionMonitor();
 $: getInit(settings.apiUrl).then((res) => {
     if (res.ok) {
         updateInitData(res);
-        startUpdateMonitor(res.data.pubnub || {});
+        startUpdatesMonitor(res.data.pubnub || {});
     }
 });
 

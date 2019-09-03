@@ -1,5 +1,5 @@
 
-export function startMonitor(callback) {
+export default function startMonitor(callback) {
     if (window.Worker) {
         const blob = new Blob([
             document.querySelector('#web-worker-monitor').textContent
