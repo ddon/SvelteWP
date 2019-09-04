@@ -529,7 +529,7 @@ $: {
             <RouterView />
         {:else}
             <div class='app-page-with-left-menu'>
-                <div>
+                <div id='left-menu'>
                     <svelte:component
                         this={templates.CustomLeftMenu}
                         menu={menu}
