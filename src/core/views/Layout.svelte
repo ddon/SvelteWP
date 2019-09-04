@@ -244,7 +244,7 @@ function updatePage() {
 
             cache.setPageById(page);
 
-            updatePrecachedPage('');
+            updatePrecachedPages('');
         }
     }).catch((err) => {
         console.error(err);
