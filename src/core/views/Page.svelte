@@ -56,7 +56,7 @@ $: {
 <div class='page'>
 {#if page}
     {#if templateComponent}
-        <div in:fade="{{ delay: 250, duration: 300 }}">
+        <div transition:fade='{{ delay: 250, duration: 300 }}'>
             <svelte:component
                 this={templateComponent}
                 menu={menu}
@@ -65,7 +65,9 @@ $: {
             />
         </div>
     {:else}
-        {@html page.content}
+        <div transition:fade='{{ delay: 250, duration: 300 }}'>
+            {@html page.content}
+        </div>
     {/if}
 {:else if isNotFound && !isNetworkError}
     <svelte:component this={templates.NotFound} />
