@@ -1,6 +1,6 @@
 
-var Settings = {
-    cacheName: 'wordpressStatic',
+const Settings = {
+    cacheName: 'svelteStatic',
     filesToCache: []
 };
 
@@ -41,17 +41,17 @@ self.addEventListener('activate', function(evt) {
 
 
 self.addEventListener('fetch', function(evt) {
-    var saveToCache = function(request, response) {
+    function saveToCache(request, response) {
         return caches.open(Settings.cacheName).then(function(cache) {
             console.log('[PWA][ServiceWorker] Add page to cache:', request.url);
             return cache.put(request, response);
         });
     };
 
-    var getFromCache = function(request) {
+    function getFromCache(request) {
         return caches.open(Settings.cacheName).then(function(cache) {
             return cache.match(request).then(function(matching) {
-                var report = !matching || matching.status == 404 ? Promise.reject('no-match') : matching;
+                const report = !matching || matching.status == 404 ? Promise.reject('no-match') : matching;
                 return report;
             });
         });

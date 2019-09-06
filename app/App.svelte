@@ -23,18 +23,17 @@ window.process = {
 
 
 const defaultSettings = {
-    title: '',
     apiUrl: ''
 };
 
 
 const defaultTemplates = {
-    'RequestLoader': RequestLoader,
-    'Header': Header,
-    'Footer': Footer,
-    'NotFound': NotFound,
-    'NetworkError': NetworkError,
-    'NewVersion': NewVersion
+    RequestLoader,
+    Header,
+    Footer,
+    NotFound,
+    NetworkError,
+    NewVersion
 };
 
 

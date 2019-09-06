@@ -5,7 +5,7 @@ html, body {
 }
 
 body {
-    color: #333;
+    color: #333333;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -32,12 +32,12 @@ input, button, select, textarea {
     padding: 0.4em;
     margin: 0 0 0.5em 0;
     box-sizing: border-box;
-    border: 1px solid #ccc;
+    border: 1px solid #cccccc;
     border-radius: 2px;
 }
 
 input:disabled {
-	color: #ccc;
+	color: #cccccc;
 }
 
 input[type="range"] {
@@ -45,15 +45,15 @@ input[type="range"] {
 }
 
 button {
-    color: #333;
+    color: #333333;
     background-color: #f4f4f4;
     outline: none;
 }
 
 button:active {
-    background-color: #ddd;
+    background-color: #dddddd;
 }
 
 button:focus {
-    border-color: #666;
+    border-color: #666666;
 }

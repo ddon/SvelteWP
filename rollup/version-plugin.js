@@ -1,7 +1,7 @@
-import fs from 'fs';
+const fs = require('fs');
 
 
-export default function(opts = {}) {
+function versionPlugin(opts = {}) {
     const version = opts.version || '';
     const versionFilePath = opts.path || '';
 
@@ -18,10 +18,10 @@ export default function(opts = {}) {
             }));
         }
     }
-};
+}
 
 
-export function getVersion() {
+function getVersion() {
     const d = new Date();
 
     const year = d.getFullYear();
@@ -53,3 +53,9 @@ export function getVersion() {
 
     return `${year}${month}${day}${hours}${minutes}${seconds}`;
 }
+
+
+module.exports = {
+    version: versionPlugin,
+    getVersion
+};

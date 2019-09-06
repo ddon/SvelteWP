@@ -5,7 +5,7 @@ import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import replace from 'rollup-plugin-replace';
 
-import version, { getVersion } from './rollup.version-plugin';
+import { version, getVersion } from 'svelte-wp/rollup';
 
 const production = !process.env.ROLLUP_WATCH;
 const bundleVersion = getVersion();
