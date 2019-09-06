@@ -1,7 +1,13 @@
 {
   "name": "svelte-wp",
-  "description": "",
+  "description": "Client for SvelteWP wordpress plugin",
   "version": "0.0.1",
+  "keywords": ["svelte", "sveltejs", "UI"],
+  "author": "Dmitri Don",
+  "homepage": "https://github.com/ddon/SvelteWP",
+  "bugs": {
+    "url": "https://github.com/ddon/SvelteWP/issues"
+  },
   "dependencies": {
     "svelte": "^3.9.2",
     "@svel/router": "^1.0.0",
