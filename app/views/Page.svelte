@@ -30,6 +30,17 @@ pageStore.subscribe(value => {
 });
 
 
+function getPageClasses(page) {
+    const classes = ['page'];
+
+    if (page && page.is_gutenberg) {
+        classes.push('gutenberg');
+    }
+
+    return classes.join(' ');
+}
+
+
 $: {
     if (page) {
         templateComponent = null;
@@ -53,7 +64,7 @@ $: {
 </style>
 
 
-<div class='page'>
+<div class={getPageClasses(page)}>
 {#if page}
     {#if templateComponent}
         <div transition:fade='{{ delay: 250, duration: 300 }}'>

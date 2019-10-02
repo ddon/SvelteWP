@@ -58,6 +58,9 @@ let footer = {};
 let footerMenu = {};
 let footerData = {};
 
+const defaultAssets = { css: [], js: [] };
+let assets = { ...defaultAssets };
+
 let precachedPages = {
     langSlug: null,
     pages: []
@@ -147,6 +150,8 @@ function updateInitData(res) {
 
     header = res.data.header || { translations: {} };
     footer = res.data.footer || { translations: {} };
+
+    assets = res.data.assets || { ...defaultAssets };
 }
 
 
@@ -506,6 +511,14 @@ $: {
 </svelte:head>
 
 {#if isInitialized}
+    {#each assets.css as cssUrl}
+        <link rel='stylesheet' href={cssUrl}>
+    {/each}
+
+    {#each assets.js as jsUrl}
+        <script src={jsUrl}></script>
+    {/each}
+
     <div class='app'>
         <svelte:component
             this={templates.Header}
